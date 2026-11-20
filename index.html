@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Prashanta's Personal Productivity Dashboard</title>
+<style>
+:root{--bg:#f3f6fb;--card:#fff;--tx:#0f172a;--mu:#64748b;--bd:#e2e8f0;--pr:#2563eb;--ok:#16a34a;--bad:#dc2626;--hv:#eef3ff}
+[data-theme=dark]{--bg:#0b1220;--card:#131c2e;--tx:#e5eaf3;--mu:#94a3b8;--bd:#24304a;--pr:#5b9bff;--hv:#1b2740}
+*{box-sizing:border-box}
+body{margin:0;font:15px/1.5 system-ui,-apple-system,"Segoe UI",sans-serif;background:var(--bg);color:var(--tx);display:flex;min-height:100vh}
+nav{width:216px;background:var(--card);border-right:1px solid var(--bd);padding:14px 10px;position:sticky;top:0;height:100vh;overflow:auto;flex-shrink:0}
+nav b{display:block;color:var(--pr);margin:4px 10px 14px;font-size:16px}
+nav button{display:block;width:100%;text-align:left;background:none;border:0;color:var(--tx);padding:9px 12px;border-radius:8px;cursor:pointer;font:inherit;transition:.15s}
+nav button:hover{background:var(--hv)}nav button.on{background:var(--pr);color:#fff}
+main{flex:1;padding:20px;min-width:0;max-width:1240px;margin:0 auto}
+header{display:flex;flex-wrap:wrap;gap:12px;justify-content:space-between;align-items:flex-start;margin-bottom:16px}
+h1{margin:0;font-size:24px}h2{margin:0 0 12px;font-size:18px}h3{margin:0 0 8px}
+.sub{color:var(--mu);margin:2px 0}.q{font-style:italic;color:var(--mu);max-width:560px}
+.clk{text-align:right}.clk b{font-size:22px;display:block}
+.card{background:var(--card);border:1px solid var(--bd);border-radius:12px;padding:16px;margin-bottom:14px}
+.g{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:12px;margin-bottom:14px}
+.g2{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:14px}
+.st{background:var(--card);border:1px solid var(--bd);border-radius:12px;padding:12px}
+.st small{color:var(--mu);display:block}.st b{font-size:20px}
+.pb{margin:10px 0}.pb div{display:flex;justify-content:space-between;font-size:13px}
+.pb u{display:block;height:9px;background:var(--bd);border-radius:6px;overflow:hidden;margin-top:4px;text-decoration:none}
+.pb i{display:block;height:100%;background:var(--pr);border-radius:6px;transition:width .5s}
+button{font:inherit;cursor:pointer;border-radius:8px;border:1px solid var(--bd);background:var(--card);color:var(--tx);padding:7px 12px}
+button.p{background:var(--pr);color:#fff;border-color:var(--pr)}button.d{color:var(--bad)}button.ok{background:var(--ok);color:#fff;border-color:var(--ok)}
+button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible{outline:2px solid var(--pr);outline-offset:2px}
+input,select,textarea{font:inherit;padding:7px 9px;border:1px solid var(--bd);border-radius:8px;background:var(--bg);color:var(--tx);width:100%}
+label{display:block;font-size:13px;color:var(--mu);margin:6px 0}
+.row{display:flex;flex-wrap:wrap;gap:10px;align-items:flex-end}.row>*{flex:1;min-width:150px}.row>button{flex:0 0 auto;min-width:0}
+.big{font:600 52px/1.1 ui-monospace,Menlo,monospace;text-align:center;margin:14px 0}
+.btns{display:flex;gap:8px;justify-content:center;flex-wrap:wrap}
+.tl{display:flex;gap:8px;align-items:center;padding:8px 0;border-bottom:1px solid var(--bd);flex-wrap:wrap}
+.tl span{flex:1;min-width:160px}.dot{width:10px;height:10px;border-radius:50%;flex:0 0 10px!important;min-width:0!important}
+.tl button{padding:2px 8px}.em{color:var(--mu);padding:14px;text-align:center}
+table{width:100%;border-collapse:collapse;font-size:13px}th,td{padding:7px;border-bottom:1px solid var(--bd);text-align:left}
+.tw{overflow-x:auto}.ch{height:250px;position:relative}
+#act{background:var(--pr);color:#fff;border-radius:10px;padding:6px 12px;cursor:pointer}
+.hm{display:grid;grid-template-columns:repeat(7,1fr);gap:4px}.hm div{aspect-ratio:1;border-radius:6px;font-size:11px;padding:3px;background:var(--bd)}
+.bd{display:inline-block;padding:4px 10px;border-radius:20px;border:1px solid var(--bd);margin:3px;font-size:13px}.bd.on{background:var(--pr);color:#fff}
+.warn{background:#fef3c7;color:#78350f;border-radius:10px;padding:10px;margin-bottom:12px;display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+dialog{border:1px solid var(--bd);border-radius:14px;background:var(--card);color:var(--tx);width:min(460px,94vw);padding:18px}
+dialog::backdrop{background:#0008}.r{display:flex;gap:8px;justify-content:flex-end;margin-top:12px}
+#toast{position:fixed;right:16px;top:16px;background:var(--tx);color:var(--bg);padding:10px 16px;border-radius:10px;opacity:0;transition:.3s;pointer-events:none;z-index:9}#toast.on{opacity:1}
+@media(max-width:800px){body{display:block}nav{position:fixed;bottom:0;top:auto;left:0;right:0;width:100%;height:auto;display:flex;overflow-x:auto;border-right:0;border-top:1px solid var(--bd);z-index:5;padding:6px}nav b{display:none}nav button{white-space:nowrap;width:auto}main{padding:12px 12px 74px}.big{font-size:40px}.clk{text-align:left}}
+@media(prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+<nav id="nav" aria-label="Main"></nav>
+<main>
+<header>
+<div><h1>Prashanta's Personal Productivity Dashboard</h1><p class="sub">Discipline Today, Success Tomorrow.</p><p class="q" id="quote"></p></div>
+<div class="clk"><b id="clock"></b><span id="date" class="sub"></span><div style="margin-top:6px"><button onclick="A.theme()" aria-label="Toggle dark mode">🌓 Theme</button></div></div>
+</header>
+<div id="act" hidden onclick="A.go('timer')" role="button" tabindex="0"></div>
+<div id="warn"></div>
+<div id="v"></div>
+</main>
+<dialog id="dlg"></dialog><datalist id="subs"></datalist><div id="toast" role="status"></div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<script>
+"use strict";
+const KEY='ppd_v1',TZ='Asia/Dhaka',H=36e5,DAY=864e5;
+const $=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
+const CATS={
+A:{n:'Government Nursing Job Preparation',sh:'Nursing',col:'#2563eb',s:['Nursing Fundamentals','Medical-Surgical Nursing','Anatomy and Physiology','Pharmacology','Community Health Nursing','Maternal and Child Health Nursing','Mental Health Nursing','Emergency and Critical Care Nursing','Bangladesh Affairs','International Affairs','English','Bangla','General Knowledge','Model Test and MCQ Practice','Written Examination Preparation','Revision and Mistake Analysis']},
+B:{n:'MPH Academic Activities',sh:'MPH',col:'#7c3aed',s:['MPH Lecture Review','Assignment','Research Reading','Biostatistics','Epidemiology','Public Health Nutrition','Research Methodology','Class Preparation','Exam Preparation']},
+C:{n:'R Programming for Public Health',sh:'R programming',col:'#0891b2',s:['R Basics','RStudio','Variables and Data Types','Vectors, Matrices and Data Frames','Importing Excel and CSV Data','Data Cleaning','Data Management with dplyr','Missing Data Management','Descriptive Statistics','Data Visualization with ggplot2','Hypothesis Testing','t-test and Chi-square Test','Correlation','Linear Regression','Logistic Regression','Public Health Data Analysis Project']},
+D:{n:'English Development',sh:'English',col:'#ea580c',s:['English Speaking Practice','Vocabulary','Grammar','IELTS Listening','IELTS Reading','IELTS Writing','IELTS Speaking','Academic English']},
+E:{n:'Personal Development',sh:'Personal',col:'#16a34a',s:['Book Reading','Research and Scholarship Preparation','Career Development','Personal Reflection and Journaling','Exercise and Physical Activity','Other Personal Activities']},
+X:{n:'MPH Class Attendance (not study)',sh:'Class',col:'#94a3b8',s:['Thursday Evening Class','Friday Class','Other Class']}};
+const PR=['A','B','C','D','E'],DN=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'],WD=['Saturday','Sunday','Monday','Tuesday','Wednesday','Thursday','Friday'];
+const QUOTES=['Small daily improvements add up to extraordinary results.','Discipline is choosing what you want most over what you want now.','You do not rise to your goals; you fall to your systems.','Consistency beats intensity.','One focused hour today is worth ten planned hours tomorrow.','Progress, not perfection.','Success is the sum of small efforts repeated day after day.','Start where you are. Use what you have. Do what you can.','Your future is created by what you do today.','Hard work compounds like interest.','Show up even when motivation does not.','Done is better than perfect.'];
+const uid=()=>Date.now().toString(36)+Math.random().toString(36).slice(2,6);
+const dk=t=>new Date(t+6*H).toISOString().slice(0,10),t0=k=>Date.parse(k+'T00:00:00+06:00');
+const addD=(k,n)=>dk(t0(k)+n*DAY),dow=k=>new Date(k+'T00:00:00Z').getUTCDay(),wkStart=k=>addD(k,-((dow(k)+1)%7)),today=()=>dk(Date.now());
+const tm=t=>new Date(t).toLocaleTimeString('en-GB',{timeZone:TZ,hour:'2-digit',minute:'2-digit'});
+const fmt=ms=>{const s=Math.max(0,Math.floor(ms/1000));return[s/3600|0,s%3600/60|0,s%60].map(x=>String(x).padStart(2,'0')).join(':')};
+const hh=ms=>{const m=Math.round(ms/6e4);return(m/60|0)+'h '+String(m%60).padStart(2,'0')+'m'};
+const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const catId=n=>Object.keys(CATS).find(k=>CATS[k].n===n);
+const subsOf=c=>CATS[c].s.concat(S.set.custom[c]||[]);
+const mkGoal=(t,d,c,pr)=>({id:uid(),t,d,c,sd:today(),td:'',pr,pg:0,st:'Not Started'});
+const DEF=()=>({v:1,sessions:[],timer:null,notes:{},todos:[],rev:{},bk:null,remLast:'',sel:{c:'A',s:CATS.A.s[0]},
+goals:[mkGoal('Secure a Government Senior Staff Nurse position','Prepare for and pass the recruitment process.','A','High'),mkGoal('Complete 40 hours of R programming in one month','Reach 40 tracked hours this month.','C','High'),mkGoal('Maintain MPH academic consistency','Study independently every day and attend classes.','B','High'),mkGoal('Complete weekly nursing examination preparation targets','Reach 22-23 hours of nursing prep every week.','A','High'),mkGoal('Improve English speaking confidence','Three speaking sessions every week.','D','Medium'),mkGoal('Develop practical public health data analysis skills','Finish a public health data analysis project in R.','C','Medium')],
+tt:{Saturday:'06:30–07:30 English speaking practice\n08:30–15:00 Office\nRemaining time: Nursing preparation, MPH, R programming and cooking',Sunday:'08:30–15:00 Office\nRemaining time: Study and personal activities',Monday:'06:30–07:30 English speaking practice\n08:30–15:00 Office\nRemaining time: Study and personal activities',Tuesday:'08:30–15:00 Office\nRemaining time: Study and personal activities',Wednesday:'08:30–15:00 Office\nRemaining time: Study and personal activities',Thursday:'06:30–07:30 English speaking practice\n08:30–15:00 Office\n16:00–18:00 Travel to university\n18:00–21:00 MPH class\n21:00–23:00 Return journey',Friday:'06:00 Leave home for university\n07:30–13:00 MPH class\n13:00–15:00 Return journey'},
+set:{t:{A:4,B:2,C:1.42,E:1},w:{A:22.5,B:14,C:10,D:3},mR:40,theme:null,custom:{},exams:[],rem:{on:false,time:'06:00'}}});
+let S=load(),T=null,view='dash',wo=0,mo=0,HF={d:'',c:'',q:'',o:'new'},charts={};
+function merge(r){const d=DEF();return{...d,...r,set:{...d.set,...(r.set||{}),t:{...d.set.t,...(r.set?.t||{})},w:{...d.set.w,...(r.set?.w||{})}}}}
+function load(){try{const r=JSON.parse(localStorage.getItem(KEY));return r?merge(r):DEF()}catch(e){return DEF()}}
+function save(){try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){alert('Could not save data (storage full or blocked). Export a backup now.')}}
+T=S.timer;
+function toast(m){const t=$('#toast');t.textContent=m;t.classList.add('on');setTimeout(()=>t.classList.remove('on'),2600)}
+const el=()=>T?T.acc+(T.since?Date.now()-T.since:0):0;
+function* parts(x){const s=x.s,e=x.e,sp=Math.max(e-s,1);let k=dk(s);for(;;){const a=Math.max(s,t0(k)),b=Math.min(e,t0(k)+DAY);if(b>a)yield[k,x.d*(b-a)/sp];if(t0(k)+DAY>=e)break;k=addD(k,1)}}
+function agg(f,t){const D={},U={};S.sessions.forEach(x=>{for(const[k,ms]of parts(x)){if(k<f||k>t)continue;(D[k]=D[k]||{})[x.c]=(D[k][x.c]||0)+ms;const u=x.c+'|'+x.u;U[u]=(U[u]||0)+ms}});return{D,U}}
+const prod=d=>PR.reduce((a,c)=>a+((d&&d[c])||0),0);
+const met=d=>((d&&d.A)||0)>=S.set.t.A*H&&((d&&d.B)||0)>=S.set.t.B*H;
+const pct=d=>{const l=['A','B','C','E'].filter(c=>S.set.t[c]>0);return l.length?l.reduce((a,c)=>a+Math.min(1,((d&&d[c])||0)/(S.set.t[c]*H)),0)/l.length*100:0};
+const speakN=(f,t)=>S.sessions.filter(x=>x.c==='D'&&x.u==='English Speaking Practice'&&dk(x.s)>=f&&dk(x.s)<=t).length;
+const sumC=(D,ks)=>{const o={};ks.forEach(k=>Object.entries(D[k]||{}).forEach(([c,v])=>o[c]=(o[c]||0)+v));return o};
+const bar=(l,ms,tg,u)=>{const v=u?ms:ms/H,p=tg>0?Math.min(100,v/tg*100):0;return`<div class="pb"><div><span>${l}</span><span>${u?ms+' / '+tg+' '+u:hh(ms)+' / '+tg+'h'} (${Math.round(p)}%)</span></div><u><i style="width:${p}%"></i></u></div>`};
+const st=(l,v)=>`<div class="st"><small>${l}</small><b>${v}</b></div>`;
+const top=(o,f)=>{let b=null;Object.entries(o).forEach(([k,v])=>{if((!f||f(k))&&(!b||v>b[1]))b=[k,v]});return b};
+function ch(id,type,data,opt){if(!window.Chart||!$('#'+id))return;if(charts[id])charts[id].destroy();charts[id]=new Chart($('#'+id),{type,data,options:{responsive:true,maintainAspectRatio:false,...opt}})}
+const dl=(n,txt,m)=>{const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([txt],{type:m||'text/csv'}));a.download=n;a.click();setTimeout(()=>URL.revokeObjectURL(a.href),500)};
+const csv=rows=>'\ufeff'+rows.map(r=>r.map(v=>'"'+String(v??'').replace(/"/g,'""')+'"').join(',')).join('\n');
+const dayName=k=>DN[dow(k)]+' '+k.slice(5);
+function modal(t,f,cb){const d=$('#dlg');d.innerHTML=`<form><h3>${t}</h3>${f.map(x=>`<label>${x.l}${x.t==='select'?`<select name="${x.k}">${x.o.map(o=>`<option ${o==x.v?'selected':''}>${esc(o)}</option>`).join('')}</select>`:x.t==='textarea'?`<textarea name="${x.k}" rows="5">${esc(x.v)}</textarea>`:`<input name="${x.k}" type="${x.t||'text'}" value="${esc(x.v)}" ${x.x||''}>`}</label>`).join('')}<div class="r"><button type="button" onclick="dlg.close()">Cancel</button><button class="p">Save</button></div></form>`;
+d.querySelector('form').onsubmit=e=>{e.preventDefault();if(cb(Object.fromEntries(new FormData(e.target)))!==false)d.close()};d.showModal()}
+function overlap(s,e,id){return S.sessions.some(x=>x.id!==id&&x.s<e&&x.e>s)||(T&&s<Date.now()&&e>T.start)}
+function sesList(a){return a.length?a.slice().sort((x,y)=>x.s-y.s).map(x=>`<div class="tl"><b>${tm(x.s)}–${tm(x.e)}</b><i class="dot" style="background:${CATS[x.c].col}"></i><span>${esc(x.u)} · ${hh(x.d)}${x.n?' — '+esc(x.n):''}</span><button onclick="A.es('${x.id}')" aria-label="Edit">✎ Edit</button><button class="d" onclick="A.ds('${x.id}')" aria-label="Delete">Delete</button></div>`).join(''):'<div class="em">No sessions recorded yet. Start a timer or add a past session.</div>'}
+function dayBlock(k){const d=agg(k,k).D[k]||{},sc=S.sessions.filter(x=>dk(x.s)===k),ps=sc.filter(x=>x.c!=='X'),t=S.set.t,sp=[6,1,4].includes(dow(k)),sn=speakN(k,k);
+return`<div class="g">${st('Total productive',hh(prod(d)))}${PR.map(c=>st(CATS[c].sh,hh(d[c]||0))).join('')}${st('Class attendance',hh(d.X||0))}${st('Sessions',ps.length)}${st('Goals completed',S.goals.filter(g=>g.st==='Completed').length+' / '+S.goals.length)}${st('To-dos done',S.todos.filter(x=>x.done).length+' / '+S.todos.length)}</div>
+<div class="g2"><div class="card"><h2>Daily goal progress</h2>${bar('Nursing',d.A||0,t.A)}${bar('MPH independent study',d.B||0,t.B)}${bar('R programming',d.C||0,t.C)}${sp?bar('English speaking',sn,1,'session'):'<p class="sub">English: no speaking session scheduled today.</p>'}${t.E>0?bar('Personal activities',d.E||0,t.E):''}<h3>Daily achievement: ${Math.round(pct(d))}%</h3><p class="sub">${met(d)?'✅ Daily targets met':'Daily targets not met yet'}</p></div>
+<div class="card"><h2>Activity timeline</h2>${sesList(sc)}</div></div>`}
+const V={
+dash(){const k=today(),w=S.sessions.length,ex=S.set.exams.filter(e=>t0(e.d)+DAY>Date.now()).sort((a,b)=>a.d<b.d?-1:1),h=new Date().toLocaleString('en-GB',{timeZone:TZ,hour:'numeric',hour12:false})*1,gr=h<12?'Good morning':h<17?'Good afternoon':'Good evening';
+const ym=k.slice(0,7),mc=sumC(agg(ym+'-01',ym+'-31').D,Object.keys(agg(ym+'-01',ym+'-31').D)),left=Math.max(0,S.set.mR-(mc.C||0)/H),dl2=Math.round((t0(addD(ym+'-28',5).slice(0,7)+'-01')-t0(k))/DAY);
+$('#v').innerHTML=`<div class="card"><h2>${gr}, Prashanta 👋</h2><p class="sub">${w?'Keep your streak alive today.':'Welcome! Open Activity Timer and start your first session.'}</p></div>${T?`<div class="card"><h3>Currently active</h3><p><b>${esc(T.u)}</b> (${CATS[T.c].sh}) — <span data-l="e">${fmt(el())}</span> ${T.since?'running':'paused'} <button class="p" onclick="A.go('timer')">Open timer</button></p></div>`:''}${dayBlock(k)}
+<div class="g2"><div class="card"><h2>Streak & badges</h2><p><b>🔥 ${A.streak()} day streak</b> (days meeting nursing and MPH targets)</p>${A.badges()}</div>
+<div class="card"><h2>Countdowns</h2><p>R programming target: <b>${left.toFixed(1)}h left</b> of ${S.set.mR}h this month, ${dl2} days remaining.</p>${ex.length?ex.map(e=>`<p>📅 ${esc(e.n)} — <b>${Math.ceil((t0(e.d)-Date.now())/DAY)} days</b> (${e.d})</p>`).join(''):'<p class="sub">No exam dates yet. Add them in Settings.</p>'}</div></div>`},
+timer(){const c=T?T.c:S.sel.c,u=T?T.u:S.sel.s,k=today(),d=agg(k,k).D[k]||{},base=d[c]||0,sb=(agg(k,k).U[c+'|'+u])||0,tg=S.set.t[c],lock=T?'disabled':'';
+$('#v').innerHTML=`<div class="card"><h2>Activity timer</h2><div class="row"><label>Category<select ${lock} onchange="A.sc(this.value)">${[...PR,'X'].map(x=>`<option value="${x}" ${x===c?'selected':''}>${CATS[x].n}</option>`).join('')}</select></label><label>Activity<select ${lock} onchange="A.su(this.value)">${subsOf(c).map(x=>`<option ${x===u?'selected':''}>${esc(x)}</option>`).join('')}</select></label></div>
+<p class="sub" style="text-align:center;margin-top:14px">${T?(T.since?'⏱ Running':'⏸ Paused'):'Ready'}: <b>${esc(u)}</b></p><div class="big" data-l="e">${fmt(el())}</div>
+<div class="btns">${!T?'<button class="ok" onclick="A.start()">▶ Start</button>':T.since?'<button onclick="A.pause()">⏸ Pause</button>':'<button class="p" onclick="A.resume()">▶ Resume</button>'}${T?'<button class="d" onclick="A.stop()">⏹ Stop & save</button><button onclick="A.reset()">↺ Reset</button>':''}</div>
+${T?'<label>Session notes<input id="tn" placeholder="Optional" value="'+esc(T.n||'')+'" oninput="T.n=this.value;S.timer=T;save()"></label>':''}
+<div class="g" style="margin-top:14px">${st('Today for this activity','<span data-l="tt" data-b="'+sb+'">'+hh(sb+(T?el():0))+'</span>')}${st(CATS[c].sh+' today',hh(base))}${st('Daily target',tg?tg+'h':c==='D'?'Weekly: '+S.set.w.D+' sessions':'—')}${st('Remaining today',tg?'<span data-l="rm" data-b="'+(tg*H-base)+'">'+hh(Math.max(0,tg*H-base-(T?el():0)))+'</span>':'—')}</div>
+<button onclick="A.add()">＋ Add past session</button></div><div class="card"><h2>Today's sessions</h2>${sesList(S.sessions.filter(x=>dk(x.s)===k))}</div>`},
+daily(){const k=A.dd||today(),n=S.notes[k]||{};
+$('#v').innerHTML=`<div class="card"><div class="row"><label>Date<input type="date" value="${k}" onchange="A.dd=this.value||today();render()"></label><button onclick="A.add(null,'${k}')">＋ Add session</button></div></div>${dayBlock(k)}
+<div class="card"><h2>Daily notes</h2>${[['a','What I accomplished today'],['f','What I failed to complete'],['l','What I learned'],['t','Tomorrow\'s priorities']].map(([f,l])=>`<label>${l}<textarea id="n_${f}" rows="3">${esc(n[f])}</textarea></label>`).join('')}<button class="p" onclick="A.nsave('${k}')">Save notes</button></div>`},
+week(){const ws=wkStart(addD(today(),wo*7)),ks=[...Array(7)].map((_,i)=>addD(ws,i)),{D,U}=agg(ks[0],ks[6]),c=sumC(D,ks),w=S.set.w,tk=today(),sn=speakN(ks[0],ks[6]),np=S.sessions.filter(x=>x.c!=='X'&&dk(x.s)>=ks[0]&&dk(x.s)<=ks[6]).length,
+tots=ks.map(k=>prod(D[k])),past=ks.filter(k=>k<=tk),mx=past.length?past.reduce((a,b)=>prod(D[b])>prod(D[a])?b:a):null,mn=past.length?past.reduce((a,b)=>prod(D[b])<prod(D[a])?b:a):null,ts=top(U,k=>!k.startsWith('X|')),
+gp=[Math.min(1,(c.A||0)/H/w.A),Math.min(1,(c.B||0)/H/w.B),Math.min(1,(c.C||0)/H/w.C),Math.min(1,sn/w.D)].reduce((a,b)=>a+b)/4*100,rk='w'+ws;
+$('#v').innerHTML=`<div class="card"><div class="row"><button onclick="wo--;render()">← Previous week</button><h2 style="flex:3;text-align:center;margin:0">${ks[0]} to ${ks[6]} (Sat–Fri)</h2><button onclick="wo++;render()">Next week →</button></div></div>
+<div class="g">${st('Total productive',hh(tots.reduce((a,b)=>a+b,0)))}${st('Nursing',hh(c.A||0)+' / '+w.A+'h')}${st('MPH study',hh(c.B||0)+' / '+w.B+'h')}${st('R programming',hh(c.C||0)+' / '+w.C+'h')}${st('English speaking',sn+' / '+w.D+' sessions')}${st('Weekly goal achievement',Math.round(gp)+'%')}${st('Most productive day',mx&&prod(D[mx])?dayName(mx):'—')}${st('Least productive day',mn&&prod(D[mn])>=0&&np?dayName(mn):'—')}${st('Most studied subject',ts?esc(ts[0].split('|')[1]):'—')}${st('Study sessions',np)}</div>
+${np?'':'<div class="card em">No sessions this week yet. Charts will fill in as you record time.</div>'}
+<div class="g2"><div class="card"><h3>Productive hours by day</h3><div class="ch"><canvas id="c1"></canvas></div></div><div class="card"><h3>Time by category</h3><div class="ch"><canvas id="c2"></canvas></div></div></div>
+<div class="card"><h3>Daily progress (% of daily targets)</h3><div class="ch"><canvas id="c3"></canvas></div></div>
+<div class="card"><h2>Weekly review</h2><p class="sub">${Math.round(gp)}% of weekly targets reached. ${(c.A||0)/H>=w.A?'Nursing target reached.':'Nursing needs '+Math.max(0,w.A-(c.A||0)/H).toFixed(1)+'h more.'}</p><textarea id="rv" rows="4" placeholder="What went well? What to change next week?">${esc(S.rev[rk])}</textarea><br><button class="p" onclick="A.rsave('${rk}')">Save review</button></div>`;
+ch('c1','bar',{labels:ks.map(dayName),datasets:[{label:'Hours',data:tots.map(x=>+(x/H).toFixed(2)),backgroundColor:'#2563eb'}]},{scales:{y:{beginAtZero:true}}});
+ch('c2','doughnut',{labels:PR.map(x=>CATS[x].sh),datasets:[{data:PR.map(x=>+((c[x]||0)/H).toFixed(2)),backgroundColor:PR.map(x=>CATS[x].col)}]});
+ch('c3','line',{labels:ks.map(dayName),datasets:[{label:'% of daily targets',data:ks.map(k=>k>tk?null:Math.round(pct(D[k]))),borderColor:'#2563eb',tension:.3}]},{scales:{y:{beginAtZero:true,max:100}}})},
+month(){const[y0,m0]=today().split('-').map(Number),mm=m0-1+mo,y=y0+Math.floor(mm/12),m=((mm%12)+12)%12,nd=new Date(Date.UTC(y,m+1,0)).getUTCDate(),p2=n=>String(n).padStart(2,'0'),mk=y+'-'+p2(m+1),ks=[...Array(nd)].map((_,i)=>mk+'-'+p2(i+1)),{D,U}=agg(ks[0],ks[nd-1]),c=sumC(D,ks),tk=today(),el2=ks.filter(k=>k<=tk),t=S.set.t,
+sn=speakN(ks[0],ks[nd-1]),tot=ks.reduce((a,k)=>a+prod(D[k]),0),mx=el2.length?el2.reduce((a,b)=>prod(D[b])>prod(D[a])?b:a):null,tc=top(c,k=>k!=='X'),ok=el2.filter(k=>met(D[k])).length,
+gr=[Math.min(1,(c.A||0)/H/(t.A*el2.length||1)),Math.min(1,(c.B||0)/H/(t.B*el2.length||1)),Math.min(1,(c.C||0)/H/S.set.mR)].reduce((a,b)=>a+b)/3*100,rk='m'+mk,tgt=t.A+t.B+t.C,lead=(dow(ks[0])+1)%7;
+$('#v').innerHTML=`<div class="card"><div class="row"><button onclick="mo--;render()">← Previous</button><h2 style="flex:3;text-align:center;margin:0">${new Date(Date.UTC(y,m,1)).toLocaleString('en',{month:'long',year:'numeric',timeZone:'UTC'})}</h2><button onclick="mo++;render()">Next →</button></div></div>
+<div class="g">${st('Total productive',hh(tot))}${st('Nursing',hh(c.A||0))}${st('MPH study',hh(c.B||0))}${st('R programming',hh(c.C||0)+' / '+S.set.mR+'h')}${st('English sessions',sn)}${st('Personal development',hh(c.E||0))}${st('Class attendance',hh(c.X||0))}${st('Goal completion rate',Math.round(gr)+'%')}${st('Average per day',hh(el2.length?tot/el2.length:0))}${st('Most productive day',mx&&prod(D[mx])?dayName(mx):'—')}${st('Top category',tc?CATS[tc[0]].sh:'—')}${st('Days targets met',ok)}${st('Days targets missed',el2.length-ok)}</div>
+${tot?'':'<div class="card em">No activity recorded this month.</div>'}
+<div class="g2"><div class="card"><h3>Productive hours per day</h3><div class="ch"><canvas id="c1"></canvas></div></div><div class="card"><h3>Time by category</h3><div class="ch"><canvas id="c2"></canvas></div></div></div>
+<div class="card"><h3>Consistency (% of daily targets)</h3><div class="ch"><canvas id="c3"></canvas></div></div>
+<div class="card"><h3>Calendar heatmap (weeks start Saturday)</h3><div class="hm">${['Sat','Sun','Mon','Tue','Wed','Thu','Fri'].map(d=>`<small>${d}</small>`).join('')}${'<span></span>'.repeat(lead)}${ks.map((k,i)=>{const h=prod(D[k])/H,a=h?Math.min(1,.18+.82*h/(tgt||1)):0;return`<div title="${k}: ${hh(prod(D[k]))}" style="${a?'background:rgba(37,99,235,'+a+');color:'+(a>.5?'#fff':'inherit'):''}">${i+1}</div>`}).join('')}</div></div>
+<div class="card"><h2>Monthly review</h2><textarea id="rv" rows="4">${esc(S.rev[rk])}</textarea><br><button class="p" onclick="A.rsave('${rk}')">Save review</button> <button onclick="A.expM('${mk}')">Export this month (CSV)</button></div>`;
+ch('c1','bar',{labels:ks.map((k,i)=>i+1),datasets:[{label:'Hours',data:ks.map(k=>+(prod(D[k])/H).toFixed(2)),backgroundColor:'#2563eb'}]},{scales:{y:{beginAtZero:true}}});
+ch('c2','doughnut',{labels:PR.map(x=>CATS[x].sh),datasets:[{data:PR.map(x=>+((c[x]||0)/H).toFixed(2)),backgroundColor:PR.map(x=>CATS[x].col)}]});
+ch('c3','line',{labels:ks.map((k,i)=>i+1),datasets:[{label:'% of targets',data:ks.map(k=>k>tk?null:Math.round(pct(D[k]))),borderColor:'#2563eb',tension:.3}]},{scales:{y:{beginAtZero:true,max:100}}})},
+goals(){const o=S.goals.length?Math.round(S.goals.reduce((a,g)=>a+g.pg,0)/S.goals.length):0;
+$('#v').innerHTML=`<div class="card"><h2>Goals</h2>${bar('Overall goal completion',o,100,'%')}<button class="p" onclick="A.goal()">＋ New goal</button></div>${S.goals.length?S.goals.map(g=>`<div class="card"><h3>${esc(g.t)} <small class="sub">${g.pr} priority · ${g.st}</small></h3><p>${esc(g.d)}</p><p class="sub">${CATS[g.c]?.n||''} · ${g.sd||'—'} → ${g.td||'no target date'}</p>${bar('Progress',g.pg,100,'%')}<button onclick="A.goal('${g.id}')">Edit</button> <button class="d" onclick="A.dg('${g.id}')">Delete</button></div>`).join(''):'<div class="card em">No goals yet. Create your first goal.</div>'}`},
+tt(){const td=WD[(dow(today())+1)%7],m=today().slice(0,7),cm=sumC(agg(m+'-01',m+'-31').D,Object.keys(agg(m+'-01',m+'-31').D)).X||0;
+$('#v').innerHTML=`<div class="card"><h2>Weekly timetable</h2><p class="sub">Office hours, travel and classes are never counted as study time. Class time this month: <b>${hh(cm)}</b>.</p><button onclick="A.add(null,null,{c:'X',u:'Thursday Evening Class'})">＋ Record class attendance</button></div><div class="g2">${WD.map(d=>`<div class="card" ${d===td?'style="border-color:var(--pr)"':''}><h3>${d}${d===td?' (today)':''}</h3>${esc(S.tt[d]).split('\n').map(l=>`<div class="tl">${l}</div>`).join('')}<button onclick="A.ett('${d}')" style="margin-top:8px">Edit</button></div>`).join('')}</div>`},
+hist(){$('#v').innerHTML=`<div class="card"><h2>Activity history</h2><div class="row"><label>Date<input type="date" id="hd" value="${HF.d}" oninput="A.hf()"></label><label>Category<select id="hc" onchange="A.hf()"><option value="">All</option>${Object.keys(CATS).map(k=>`<option value="${k}" ${HF.c===k?'selected':''}>${CATS[k].n}</option>`).join('')}</select></label><label>Search<input id="hq" value="${esc(HF.q)}" oninput="A.hf()" placeholder="Activity or note"></label><label>Sort<select id="ho" onchange="A.hf()">${[['new','Newest'],['old','Oldest'],['long','Longest'],['short','Shortest']].map(([v,l])=>`<option value="${v}" ${HF.o===v?'selected':''}>${l}</option>`).join('')}</select></label></div><div class="row" style="margin-top:10px"><button onclick="A.expCsv()">Export all (CSV)</button><button onclick="A.expM()">Export monthly report</button></div></div><div class="card" id="ht"></div>`;A.hf()},
+journal(){const ks=Object.keys(S.notes).filter(k=>Object.values(S.notes[k]).some(Boolean)).sort().reverse(),pr={High:0,Medium:1,Low:2};
+$('#v').innerHTML=`<div class="g2"><div class="card"><h2>To-do list</h2><button class="p" onclick="A.todo()">＋ Add task</button>${S.todos.length?S.todos.slice().sort((a,b)=>a.done-b.done||pr[a.p]-pr[b.p]).map(x=>`<div class="tl"><input type="checkbox" style="width:auto" ${x.done?'checked':''} onchange="A.tt2('${x.id}')" aria-label="Done"><span ${x.done?'style="text-decoration:line-through;opacity:.6"':''}>${esc(x.t)} <small class="sub">${x.p}</small></span><button class="d" onclick="A.dt('${x.id}')">Delete</button></div>`).join(''):'<div class="em">No tasks yet.</div>'}</div>
+<div class="card"><h2>Journal entries</h2>${ks.length?ks.map(k=>{const n=S.notes[k];return`<div class="tl" style="display:block"><b>${k}</b> <button onclick="A.dd='${k}';A.go('daily')">Open</button><br>${[['a','Accomplished'],['f','Not completed'],['l','Learned'],['t','Tomorrow']].filter(([f])=>n[f]).map(([f,l])=>`<small><b>${l}:</b> ${esc(n[f])}</small><br>`).join('')}</div>`}).join(''):'<div class="em">No entries yet. Write daily notes in the Daily Tracker.</div>'}</div></div>`},
+set(){const t=S.set.t,w=S.set.w,n=(id,v)=>`<input type="number" step="0.01" min="0" id="${id}" value="${v}">`;
+$('#v').innerHTML=`<div class="card"><h2>Targets</h2><div class="row"><label>Nursing h/day${n('tA',t.A)}</label><label>MPH h/day${n('tB',t.B)}</label><label>R h/day${n('tC',t.C)}</label><label>Personal h/day${n('tE',t.E)}</label></div><div class="row"><label>Nursing h/week${n('wA',w.A)}</label><label>MPH h/week${n('wB',w.B)}</label><label>R h/week${n('wC',w.C)}</label><label>Speaking sessions/week${n('wD',w.D)}</label><label>R h/month${n('mR',S.set.mR)}</label></div><p class="sub">A productive day means nursing and MPH daily targets are both met.</p><button class="p" onclick="A.sset()">Save targets</button></div>
+<div class="card"><h2>Custom activity & exam dates</h2><button onclick="A.cust()">＋ Custom activity</button> <button onclick="A.exam()">＋ Exam date</button>${S.set.exams.map(e=>`<div class="tl"><span>${esc(e.n)} — ${e.d}</span><button class="d" onclick="A.de('${e.id}')">Delete</button></div>`).join('')}</div>
+<div class="card"><h2>Reminders</h2><div class="row"><label>Daily reminder time<input type="time" id="rt" value="${S.set.rem.time}"></label><button onclick="A.rem()">Enable & save</button><button onclick="A.remOff()">Turn off</button></div><p class="sub">Reminders need browser permission and only fire while this page is open.</p></div>
+<div class="card"><h2>Backup</h2><p class="sub">Data is stored only in this browser. It does not sync between devices. Export a JSON backup regularly and import it on another device.</p><p>Last backup: ${S.bk?new Date(S.bk).toLocaleString('en-GB',{timeZone:TZ}):'never'}</p><div class="row"><button class="p" onclick="A.exp()">Export JSON backup</button><button onclick="A.expCsv()">Export CSV</button><label>Import JSON<input type="file" accept=".json,application/json" onchange="A.imp(this.files[0])"></label></div><button class="d" style="margin-top:10px" onclick="A.clear()">Clear all data…</button></div>`}};
+const A={dd:null,
+go(v){view=v;render();scrollTo(0,0)},
+sc(v){S.sel={c:v,s:subsOf(v)[0]};save();render()},su(v){S.sel.s=v;save();render()},
+start(){if(T)return toast('A timer is already running.');T={c:S.sel.c,u:S.sel.s,start:Date.now(),acc:0,since:Date.now(),n:''};S.timer=T;save();render()},
+pause(){if(!T||!T.since)return;T.acc+=Date.now()-T.since;T.since=null;S.timer=T;save();render()},
+resume(){if(!T||T.since)return;T.since=Date.now();S.timer=T;save();render()},
+stop(){if(!T)return;const e=Date.now(),d=el();let s=T.start;S.sessions.forEach(x=>{if(x.s<e&&x.e>s)s=Math.max(s,x.e)});const dd=Math.min(d,e-s);
+if(dd<1000){T=null;S.timer=null;save();render();return toast('Session shorter than 1 second was not saved.')}
+S.sessions.push({id:uid(),s,e,d:dd,c:T.c,u:T.u,n:T.n||''});T=null;S.timer=null;save();render();toast('Session saved')},
+reset(){if(T&&confirm('Discard the current unsaved timer run? Saved sessions are not affected.')){T=null;S.timer=null;save();render()}},
+add(id,date,pre){const x=id?S.sessions.find(s=>s.id===id):null,c=x?x.c:(pre&&pre.c)||S.sel.c;
+modal(x?'Edit session':'Add past session',[{k:'date',l:'Date',t:'date',v:x?dk(x.s):date||today(),x:'required'},{k:'st',l:'Start time',t:'time',v:x?tm(x.s):'',x:'required'},{k:'en',l:'End time (after midnight is fine)',t:'time',v:x?tm(x.e):'',x:'required'},{k:'c',l:'Category',t:'select',o:Object.values(CATS).map(z=>z.n),v:CATS[c].n},{k:'u',l:'Activity',v:x?x.u:(pre&&pre.u)||S.sel.s,x:'list="subs" required'},{k:'n',l:'Notes',v:x?x.n:''}],o=>{
+const s=Date.parse(o.date+'T'+o.st+':00+06:00');let e=Date.parse(o.date+'T'+o.en+':00+06:00');if(e<=s)e+=DAY;
+if(overlap(s,e,x&&x.id)){toast('This overlaps another session or the running timer.');return false}
+const r={id:x?x.id:uid(),s,e,d:e-s,c:catId(o.c),u:o.u.trim(),n:o.n};if(x)Object.assign(x,r);else S.sessions.push(r);save();render();toast('Session saved')})},
+es(id){A.add(id)},ds(id){if(confirm('Delete this session permanently?')){S.sessions=S.sessions.filter(x=>x.id!==id);save();render();toast('Session deleted')}},
+nsave(k){S.notes[k]={a:$('#n_a').value,f:$('#n_f').value,l:$('#n_l').value,t:$('#n_t').value};save();toast('Notes saved')},
+rsave(k){S.rev[k]=$('#rv').value;save();toast('Review saved')},
+goal(id){const g=id?S.goals.find(x=>x.id===id):null;modal(g?'Edit goal':'New goal',[{k:'t',l:'Title',v:g?g.t:'',x:'required'},{k:'d',l:'Description',t:'textarea',v:g?g.d:''},{k:'c',l:'Category',t:'select',o:Object.values(CATS).map(z=>z.n),v:CATS[g?g.c:'A'].n},{k:'sd',l:'Start date',t:'date',v:g?g.sd:today()},{k:'td',l:'Target date',t:'date',v:g?g.td:''},{k:'pr',l:'Priority',t:'select',o:['High','Medium','Low'],v:g?g.pr:'Medium'},{k:'pg',l:'Progress %',t:'number',v:g?g.pg:0,x:'min=0 max=100'},{k:'st',l:'Status',t:'select',o:['Not Started','In Progress','Completed'],v:g?g.st:'Not Started'}],o=>{
+const r={t:o.t,d:o.d,c:catId(o.c),sd:o.sd,td:o.td,pr:o.pr,pg:Math.max(0,Math.min(100,+o.pg||0)),st:o.st};if(r.st==='Completed')r.pg=100;if(g)Object.assign(g,r);else S.goals.push({id:uid(),...r});save();render();toast('Goal saved')})},
+dg(id){if(confirm('Delete this goal?')){S.goals=S.goals.filter(g=>g.id!==id);save();render()}},
+ett(d){modal('Edit '+d,[{k:'v',l:'One entry per line',t:'textarea',v:S.tt[d]}],o=>{S.tt[d]=o.v;save();render();toast('Timetable updated')})},
+hf(){HF={d:$('#hd').value,c:$('#hc').value,q:$('#hq').value,o:$('#ho').value};const q=HF.q.toLowerCase();let a=S.sessions.filter(x=>(!HF.d||dk(x.s)===HF.d)&&(!HF.c||x.c===HF.c)&&(!q||(x.u+' '+x.n+' '+CATS[x.c].n).toLowerCase().includes(q)));
+a.sort((x,y)=>HF.o==='old'?x.s-y.s:HF.o==='long'?y.d-x.d:HF.o==='short'?x.d-y.d:y.s-x.s);const tu={};a.forEach(x=>tu[x.u]=(tu[x.u]||0)+x.d);
+$('#ht').innerHTML=a.length?`<p>${a.length} sessions · ${hh(a.reduce((s,x)=>s+x.d,0))}</p><div class="tw"><table><tr><th>Date</th><th>Start</th><th>End</th><th>Category</th><th>Activity</th><th>Duration</th><th>Notes</th><th></th></tr>${a.map(x=>`<tr><td>${dk(x.s)}</td><td>${tm(x.s)}</td><td>${tm(x.e)}</td><td>${CATS[x.c].sh}</td><td>${esc(x.u)}</td><td>${hh(x.d)}</td><td>${esc(x.n)}</td><td><button onclick="A.es('${x.id}')">Edit</button> <button class="d" onclick="A.ds('${x.id}')">Delete</button></td></tr>`).join('')}</table></div><h3 style="margin-top:14px">Total per activity</h3>${Object.entries(tu).sort((p,q)=>q[1]-p[1]).map(([k,v])=>`<span class="bd">${esc(k)}: ${hh(v)}</span>`).join('')}`:'<div class="em">No matching sessions.</div>'},
+expCsv(){dl('activity-records.csv',csv([['Date','Start','End','Category','Activity','Duration (min)','Notes'],...S.sessions.slice().sort((a,b)=>a.s-b.s).map(x=>[dk(x.s),tm(x.s),tm(x.e),CATS[x.c].n,x.u,Math.round(x.d/6e4),x.n])]))},
+expM(mk){const go=m=>{const nd=new Date(Date.UTC(+m.slice(0,4),+m.slice(5,7),0)).getUTCDate(),ks=[...Array(nd)].map((_,i)=>m+'-'+String(i+1).padStart(2,'0')),{D,U}=agg(ks[0],ks[nd-1]),h=v=>((v||0)/H).toFixed(2);
+dl('report-'+m+'.csv',csv([['Date',...PR.map(c=>CATS[c].sh+' (h)'),'Class (h)','Total productive (h)','Targets met'],...ks.map(k=>[k,...PR.map(c=>h(D[k]&&D[k][c])),h(D[k]&&D[k].X),h(prod(D[k])),met(D[k])?'Yes':'No']),[],['Activity totals'],...Object.entries(U).map(([k,v])=>[CATS[k.split('|')[0]].n,k.split('|')[1],h(v)])]))};
+if(mk)go(mk);else modal('Export monthly report',[{k:'m',l:'Month',t:'month',v:today().slice(0,7),x:'required'}],o=>go(o.m))},
+exp(){S.bk=Date.now();save();dl('productivity-backup-'+today()+'.json',JSON.stringify({app:'ppd',version:1,exported:new Date().toISOString(),data:S},null,2),'application/json');render();toast('Backup downloaded')},
+imp(f){if(!f)return;const r=new FileReader();r.onload=()=>{try{const j=JSON.parse(r.result),d=j.data||j;if(!Array.isArray(d.sessions))throw 0;if(confirm('Importing will REPLACE all current data in this browser ('+S.sessions.length+' sessions). Continue?')){S=merge(d);T=S.timer;save();render();toast('Backup imported')}}catch(e){alert('Invalid backup file.')}};r.readAsText(f)},
+clear(){modal('Clear all data',[{k:'c',l:'This permanently deletes everything. Type DELETE to confirm.',x:'autocomplete=off'}],o=>{if(o.c!=='DELETE'){toast('Type DELETE exactly.');return false}localStorage.removeItem(KEY);S=DEF();T=null;render();toast('All data cleared')})},
+todo(){modal('New task',[{k:'t',l:'Task',x:'required'},{k:'p',l:'Priority',t:'select',o:['High','Medium','Low'],v:'Medium'}],o=>{S.todos.push({id:uid(),t:o.t,p:o.p,done:false});save();render()})},
+tt2(id){const x=S.todos.find(t=>t.id===id);x.done=!x.done;save();render()},dt(id){S.todos=S.todos.filter(t=>t.id!==id);save();render()},
+sset(){const n=id=>Math.max(0,+$('#'+id).value||0);S.set.t={A:n('tA'),B:n('tB'),C:n('tC'),E:n('tE')};S.set.w={A:n('wA'),B:n('wB'),C:n('wC'),D:n('wD')};S.set.mR=n('mR');save();toast('Targets saved')},
+cust(){modal('Custom activity',[{k:'c',l:'Category',t:'select',o:PR.map(c=>CATS[c].n),v:CATS.A.n},{k:'n',l:'Activity name',x:'required'}],o=>{const c=catId(o.c);(S.set.custom[c]=S.set.custom[c]||[]).push(o.n.trim());save();A.dl();toast('Activity added')})},
+exam(){modal('Exam date',[{k:'n',l:'Exam name',x:'required'},{k:'d',l:'Date',t:'date',x:'required'}],o=>{S.set.exams.push({id:uid(),...o});save();render()})},de(id){S.set.exams=S.set.exams.filter(e=>e.id!==id);save();render()},
+async rem(){if(!('Notification'in window))return alert('Notifications are not supported in this browser.');const p=await Notification.requestPermission();S.set.rem={on:p==='granted',time:$('#rt').value||'06:00'};save();toast(p==='granted'?'Reminder enabled':'Permission denied')},
+remOff(){S.set.rem.on=false;save();toast('Reminder off')},
+theme(){const n=document.documentElement.dataset.theme==='dark'?'light':'dark';S.set.theme=n;save();document.documentElement.dataset.theme=n;render()},
+dl(){$('#subs').innerHTML=Object.keys(CATS).flatMap(subsOf).map(s=>`<option value="${esc(s)}">`).join('')},
+streak(){const k=today(),D=agg(addD(k,-400),k).D;let d=met(D[k])?k:addD(k,-1),n=0;while(met(D[d])){n++;d=addD(d,-1)}return n},
+badges(){const D=agg(addD(today(),-400),today()).D,all=Object.values(D).reduce((a,d)=>a+prod(d),0)/H,s=A.streak(),ws=wkStart(today()),sn=speakN(ws,addD(ws,6)),mk=today().slice(0,7),rc=(sumC(agg(mk+'-01',mk+'-31').D,Object.keys(agg(mk+'-01',mk+'-31').D)).C||0)/H;
+return[['First session',S.sessions.length>0],['10 hours tracked',all>=10],['100 hours tracked',all>=100],['3-day streak',s>=3],['7-day streak',s>=7],['30-day streak',s>=30],['3 speaking sessions this week',sn>=3],['R: 40h this month',rc>=S.set.mR]].map(([n,o])=>`<span class="bd ${o?'on':''}">${o?'🏅 ':'🔒 '}${n}</span>`).join('')}};
+const NAV=[['dash','🏠 Dashboard'],['timer','⏱ Activity Timer'],['daily','📝 Daily Tracker'],['week','📊 Weekly Report'],['month','📅 Monthly Analytics'],['goals','🎯 Goals'],['timetable','🗓 Timetable'],['hist','📜 Activity History'],['journal','📓 Journal'],['set','⚙ Settings & Backup']];
+function render(){try{(V[view==='timetable'?'tt':view])();}catch(e){console.error(e);$('#v').innerHTML='<div class="card">Something went wrong displaying this page: '+esc(e.message)+'</div>'}
+$('#nav').innerHTML='<b>Productivity</b>'+NAV.map(([k,l])=>`<button class="${k===view?'on':''}" onclick="A.go('${k}')">${l}</button>`).join('');
+const a=$('#act');a.hidden=!T;if(T)a.innerHTML=`⏱ ${esc(T.u)} — <b data-l="e">${fmt(el())}</b> ${T.since?'':'(paused)'}`;
+$('#warn').innerHTML=S.sessions.length&&(!S.bk||Date.now()-S.bk>7*DAY)?'<div class="warn">💾 Backup reminder: export a JSON backup (data lives only in this browser). <button onclick="A.exp()">Back up now</button></div>':''}
+function tick(){const n=new Date();$('#clock').textContent=n.toLocaleTimeString('en-GB',{timeZone:TZ});$('#date').textContent=n.toLocaleDateString('en-GB',{timeZone:TZ,weekday:'long',day:'numeric',month:'long',year:'numeric'});
+$$('[data-l=e]').forEach(e=>e.textContent=fmt(el()));$$('[data-l=tt]').forEach(e=>e.textContent=hh(+e.dataset.b+el()));$$('[data-l=rm]').forEach(e=>e.textContent=hh(Math.max(0,+e.dataset.b-el())));
+const r=S.set.rem;if(r.on&&window.Notification&&Notification.permission==='granted'){const hm=tm(Date.now());if(hm===r.time&&S.remLast!==today()){S.remLast=today();save();new Notification('Time to study',{body:'Open your dashboard and start your first session.'})}}}
+document.documentElement.dataset.theme=S.set.theme||(matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light');
+const dn=Math.floor(Date.now()/DAY);$('#quote').textContent='“'+QUOTES[dn%QUOTES.length]+'”';
+A.dl();render();tick();setInterval(tick,1000);document.addEventListener('visibilitychange',tick);
+</script>
+</body>
+</html>
